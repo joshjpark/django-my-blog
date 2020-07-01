@@ -10,18 +10,15 @@ def home(request):
     }
     return render(request, 'blog/home.html', context)
 
-# list of posts view
 class PostListView(ListView):
     model = Post
     template_name = 'blog/home.html'
     context_object_name = 'posts'
     ordering = ['-date_posted']
 
-# individual post view
 class PostDetailView(DetailView):
     model = Post
 
-# individual post create view
 class PostCreateView(LoginRequiredMixin, CreateView):
     model = Post
     fields = ['title', 'content']
@@ -29,6 +26,17 @@ class PostCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.author = self.request.user
         return super().form_valid(form)
+
+class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Post
+    success_url = '/blog'
+
+    def test_func(self):
+        post = self.get_object()
+        if self.request.user == post.author:
+            return True
+        return False
+
 
 class PostUpdateview(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Post
