@@ -15,6 +15,7 @@ class PostListView(ListView):
     template_name = 'blog/home.html'
     context_object_name = 'posts'
     ordering = ['-date_posted']
+    paginate_by = 2
 
 class PostDetailView(DetailView):
     model = Post
@@ -52,7 +53,7 @@ class PostUpdateview(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
             return True
         return False
 
-
+  
 def about(request):
     return render(request, 'blog/about.html', {'title' : 'About'})
 
